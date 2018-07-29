@@ -10,8 +10,8 @@ def load_urls4check(path):
 
 
 def is_server_respond_with_200(url):
-        page = requests.get(url)
-        return page.ok
+    page = requests.get(url)
+    return page.ok
 
 
 def get_domain_expiration_date(domain_name):
@@ -19,7 +19,7 @@ def get_domain_expiration_date(domain_name):
         r'Expiration Date:</div><div class="df-value">\d{4}-\d{2}-\d{2}',
         requests.get("https://www.whois.com/whois/{}".format(domain_name)).text
     )
-    if len(string_expiration_date) > 0:
+    if string_expiration_date:
         expiration_date = datetime.datetime.strptime(
             string_expiration_date[0],
             'Expiration Date:</div><div class="df-value">%Y-%m-%d'
