@@ -11,8 +11,11 @@ def load_urls4check(path):
 
 
 def is_server_respond_with_ok(url):
-    page = requests.get(url)
-    return page.ok
+    try:
+        response = requests.get(url)
+        return response.ok
+    except requests.exceptions.RequestException as error:
+        return None
 
 
 def get_domain_expiration_date(domain_name):
@@ -24,9 +27,9 @@ def get_domain_expiration_date(domain_name):
         else:
             return expiration_date
     except socket.error:
-        return False
+        return None
     except whois.parser.PywhoisError:
-        return False
+        return None
 
 
 def get_parse_args():
@@ -55,11 +58,16 @@ def check_payment_date(expiration_date, amount_of_days):
 
 
 def pprint_url_information(url, expiration_date, respond_200, amount_of_days):
-    if respond_200:
-        print("Url 'https://{}' respond with code 200".format(url))
+    if respond_200 is None:
+        print("Could not connect to url '{}'".format(url))
+    elif respond_200 is True:
+        print("Url '{}' respond with ok code".format(url))
     else:
-        print("Url 'https://{}' not respond with code 200".format(url))
-    if check_payment_date(expiration_date, amount_of_days):
+        print("Url '{}' not respond with ok code".format(url))
+
+    if expiration_date is None:
+        print("Could not connect to domain '{}'".format(url))
+    elif check_payment_date(expiration_date, amount_of_days):
         print("Domain '{}' is paid for more then {} days\n"
               .format(url, amount_of_days))
     else:
@@ -73,7 +81,7 @@ if __name__ == "__main__":
         urls = load_urls4check(argument.path)
         for url in urls:
             expiration_date = get_domain_expiration_date(url)
-            respond_ok = is_server_respond_with_ok("https://" + url)
+            respond_ok = is_server_respond_with_ok(url)
             pprint_url_information(
                 url,
                 expiration_date,
@@ -82,5 +90,3 @@ if __name__ == "__main__":
             )
     except FileNotFoundError:
         exit("Error:file {} not found".format(argument.path))
-    except requests.exceptions.RequestException as error:
-        exit(error)
