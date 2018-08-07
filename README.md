@@ -11,7 +11,7 @@ The script determines if the site is available and up to what date the domain is
 
 ## Example using
 ```commandline
-python check_sites_health.py urls.txt
+python check_sites_health.py urls.txt 30
 ```
 
 ## Example input file *urls.txt*
@@ -24,11 +24,10 @@ stackoverflow.com
 ## Example output
 ```commandline
 Url 'https://yandex.ru' respond with code 200
-Domain 'yandex.ru' paid up before 2018-09-30
+Domain 'yandex.ru' is paid for more then 30 days
 
 Url 'https://stackoverflow.com' respond with code 200
-Domain 'stackoverflow.com' paid up before 2019-02-02
-
+Domain 'stackoverflow.com' is paid for more then 30 days
 ```
 
 # Project Goals
