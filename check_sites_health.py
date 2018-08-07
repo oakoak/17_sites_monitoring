@@ -26,9 +26,7 @@ def get_domain_expiration_date(domain_name):
             return expiration_date[0]
         else:
             return expiration_date
-    except socket.error:
-        return None
-    except whois.parser.PywhoisError:
+    except (socket.error, whois.parser.PywhoisError):
         return None
 
 
@@ -79,14 +77,15 @@ if __name__ == "__main__":
     argument = get_parse_args()
     try:
         urls = load_urls4check(argument.path)
-        for url in urls:
-            expiration_date = get_domain_expiration_date(url)
-            respond_ok = is_server_respond_with_ok(url)
-            pprint_url_information(
-                url,
-                expiration_date,
-                respond_ok,
-                argument.days
-            )
     except FileNotFoundError:
         exit("Error:file {} not found".format(argument.path))
+    for url in urls:
+        expiration_date = get_domain_expiration_date(url)
+        respond_ok = is_server_respond_with_ok(url)
+        pprint_url_information(
+            url,
+            expiration_date,
+            respond_ok,
+            argument.days
+        )
+
